@@ -11,19 +11,19 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 @Entity
-@Table(name = "usuario")
-public class User {
+@Table(name = "modulos")
+public class Modulo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name" , nullable = false)
-    private String name;
+    @Column(nullable = false)
+    private int numero;
 
     @Column(nullable = false)
-    private String email;
+    private double latitud;
 
     @Column(nullable = false)
-    private String password;
+    private double longitud;
 }
