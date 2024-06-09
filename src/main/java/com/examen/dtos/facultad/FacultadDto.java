@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class FacultadDto {
     private Long id;
     private String nombre;
+    private Integer active;
 }

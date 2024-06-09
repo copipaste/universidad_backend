@@ -1,5 +1,6 @@
 package com.examen.mappers;
 
+import com.examen.dtos.facultad.CreateFacultadDto;
 import com.examen.dtos.facultad.FacultadDto;
 import com.examen.entities.Facultad;
 import org.mapstruct.Mapper;
@@ -8,4 +9,6 @@ import org.mapstruct.Mapper;
 public interface FacultadMapper {
 
     FacultadDto toFacultadDto(Facultad facultad);
+
+    Facultad toFacultad(CreateFacultadDto createFacultadDto);
 }

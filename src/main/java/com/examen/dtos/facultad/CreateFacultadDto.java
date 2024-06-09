@@ -1,4 +1,9 @@
 package com.examen.dtos.facultad;
 
-public record CreateFacultadDto(String nombre) {
-}
+import jakarta.validation.constraints.NotBlank;
+
+public record CreateFacultadDto(
+
+    @NotBlank
+    String nombre
+) { }
