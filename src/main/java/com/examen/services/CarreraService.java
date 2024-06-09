@@ -26,9 +26,7 @@ public class CarreraService {
 
     public CarreraDto createCarrera(CreateCarreraDto createCarreraDto) {
         Carrera carrera = carreraRepository.save(carreraMapper.toCarrera(createCarreraDto));
-        System.out.println(carrera);
         carrera.setFacultad(facultadRepository.getReferenceById(createCarreraDto.facultadId()));
-        System.out.println(carrera);
         return carreraMapper.toCarreraDto(carrera);
     }
 
