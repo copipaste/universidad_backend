@@ -5,10 +5,9 @@ import com.examen.entities.Materia;
 import com.examen.mappers.MateriaMapper;
 import com.examen.repositories.MateriaRepository;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.Page;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.awt.print.Pageable;
 
 @Service
 @RequiredArgsConstructor
@@ -21,33 +20,23 @@ public class MateriaService {
         return materiaRepository.findAll(paginacion).map(materiaMapper::toMateriaDto);
     }
 
-    public Materia getMateriaById(Long id){
-        Optional<Materia> materia = materiaRepository.findById(id);
-        if(materia.isPresent()){
-            return materia.get();
-        }
-        throw new RuntimeException("Materia no encontrada con el id: "+id);
+    public MateriaDto createMateria(Materia materia) {
+        return materiaMapper.toMateriaDto(materiaRepository.save(materia));
     }
 
-    public Materia saveMateria(Materia materia){
-        return materiaRepository.save(materia);
+    public MateriaDto getMateria(Long id) {
+        Materia materia = materiaRepository.getReferenceById(id);
+        return materiaMapper.toMateriaDto(materia);
     }
 
-    public Materia updateMateria(Long id, Materia materia){
-        Optional<Materia> materiaCheck = materiaRepository.findById(id);
-        if(materiaCheck.isEmpty()){
-            throw new RuntimeException("Materia no encontrada con el id: "+id+". ");
-        }
+    public MateriaDto updateMateria(Long id, Materia materia) {
+        materiaRepository.getReferenceById(id);
         materia.setId(id);
-        return materiaRepository.save(materia);
-
+        return materiaMapper.toMateriaDto(materiaRepository.save(materia));
     }
 
-    public void deleteMateria(Long id){
-        materiaRepository.deleteById(id);
-    }
-
-    public List<Materia> getMateriasByNombre(String nombre){
-        return materiaRepository.findByNombre(nombre);
+    public void deleteMateria(Long id) {
+        Materia materia = materiaRepository.getReferenceById(id);
+        materiaRepository.delete(materia);
     }
 }
