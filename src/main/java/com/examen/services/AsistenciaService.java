@@ -1,6 +1,7 @@
 package com.examen.services;
 
 import com.examen.dtos.ApiResponse;
+import com.examen.dtos.asistencia.AsistenciaRespuestaDTO;
 import com.examen.entities.*;
 import com.examen.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,10 @@ public class AsistenciaService {
             asistencia.setFecha(fecha);
             asistencia.setVirtual(false);
             asistenciaRepository.save(asistencia);
-            return new ApiResponse<>(HttpStatus.OK.value(), "Asistencia marcada exitosamente", asistencia);
+            AsistenciaRespuestaDTO respuesta = new AsistenciaRespuestaDTO(asistencia);
+            System.out.println(respuesta);
+            System.out.println("Dentro de Asistencia Service, antes del retun");
+            return new ApiResponse<>(HttpStatus.OK.value(), "Asistencia marcada exitosamente", respuesta);
         } else {
             if (horaMarcada.isAfter(horaInicio.plusMinutes(10)) && horaMarcada.isBefore(horaInicio.plusMinutes(30))) {
                 Asistencia asistencia = new Asistencia();
@@ -67,8 +71,8 @@ public class AsistenciaService {
                 asistencia.setFecha(fecha);
                 asistencia.setVirtual(false);
                 asistenciaRepository.save(asistencia);
-
-                return new ApiResponse<>(209, "Asistencia marcada con atraso", asistencia); // 209 indica Atraso
+                AsistenciaRespuestaDTO respuesta = new AsistenciaRespuestaDTO(asistencia);
+                return new ApiResponse<>(209, "Asistencia marcada con atraso", respuesta); // 209 indica Atraso
             } else if (horaMarcada.isAfter(horaInicio.plusMinutes(30)) && horaMarcada.isBefore(horaFin)) {
                 Asistencia asistencia = new Asistencia();
                 asistencia.setDocente(docenteOpt.get());
@@ -82,8 +86,8 @@ public class AsistenciaService {
                 falta.setFecha(fecha);
                 falta.setProgramacionAcademica(horario.getProgramacionAcademica());
                 faltasRepository.save(falta);
-
-                return new ApiResponse<>(HttpStatus.OK.value(), "Falta por tardanza excedida", asistencia);
+                AsistenciaRespuestaDTO respuesta = new AsistenciaRespuestaDTO(asistencia);
+                return new ApiResponse<>(HttpStatus.OK.value(), "Falta por tardanza excedida", respuesta);
             }
         }
 
@@ -113,7 +117,8 @@ public class AsistenciaService {
             asistencia.setFecha(fecha);
             asistencia.setVirtual(true);
             asistenciaRepository.save(asistencia);
-            return new ApiResponse<>(HttpStatus.OK.value(), "Asistencia virtual marcada exitosamente", asistencia);
+            AsistenciaRespuestaDTO respuesta = new AsistenciaRespuestaDTO(asistencia);
+            return new ApiResponse<>(HttpStatus.OK.value(), "Asistencia virtual marcada exitosamente", respuesta);
         } else {
             if (horaMarcada.isAfter(horaInicio.plusMinutes(10)) && horaMarcada.isBefore(horaInicio.plusMinutes(30))) {
                 Asistencia asistencia = new Asistencia();
@@ -123,8 +128,8 @@ public class AsistenciaService {
                 asistencia.setFecha(fecha);
                 asistencia.setVirtual(true);
                 asistenciaRepository.save(asistencia);
-
-                return new ApiResponse<>(209, "Asistencia virtual marcada con atraso", asistencia); // 209 indica Atraso
+                AsistenciaRespuestaDTO respuesta = new AsistenciaRespuestaDTO(asistencia);
+                return new ApiResponse<>(209, "Asistencia virtual marcada con atraso", respuesta); // 209 indica Atraso
             } else if (horaMarcada.isAfter(horaInicio.plusMinutes(30)) && horaMarcada.isBefore(horaFin)) {
                 Asistencia asistencia = new Asistencia();
                 asistencia.setDocente(docenteOpt.get());
@@ -138,8 +143,8 @@ public class AsistenciaService {
                 falta.setFecha(fecha);
                 falta.setProgramacionAcademica(horario.getProgramacionAcademica());
                 faltasRepository.save(falta);
-
-                return new ApiResponse<>(HttpStatus.OK.value(), "Falta virtual por tardanza excedida", asistencia);
+                AsistenciaRespuestaDTO respuesta = new AsistenciaRespuestaDTO(asistencia);
+                return new ApiResponse<>(HttpStatus.OK.value(), "Falta virtual por tardanza excedida", respuesta);
             }
         }
 

@@ -24,6 +24,7 @@ public class AsistenciaController {
 
     @PostMapping("/marcar")
     public ApiResponse<Object> marcarAsistencia(@RequestBody MarcarAsistenciaDTO dto) {
+        System.out.println("ingresando a AsistenciaService");
         return asistenciaService.marcarAsistencia(dto.getDocenteId(), dto.getHora(), dto.getFecha(),
                 dto.getLatitud(), dto.getLongitud(), dto.getMateriaId(), dto.getHorarioId());
     }
