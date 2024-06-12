@@ -1,6 +1,7 @@
 package com.examen.mappers;
 
-import com.examen.dtos.HorarioDTO;
+import com.examen.dtos.HorarioDetalladoDTO;
+import com.examen.dtos.horario.HorarioDTO;
 import com.examen.entities.Horario;
 import com.examen.entities.Aula;
 import com.examen.entities.ProgramacionAcademica;
@@ -22,6 +23,13 @@ public interface HorarioMapper {
             @Mapping(source = "progAcId", target = "programacionAcademica")
     })
     Horario toEntity(HorarioDTO horarioDTO);
+
+
+    @Mapping(source = "horario.id", target = "horarioId")
+    @Mapping(source = "horario.aula", target = "aula")
+    @Mapping(source = "horario.programacionAcademica", target = "programacionAcademica")
+    @Mapping(source = "horario.programacionAcademica.materia", target = "materia")
+    HorarioDetalladoDTO toDetailedDTO(Horario horario);
 
     default Aula mapAula(Long id) {
         if (id == null) {
@@ -54,4 +62,5 @@ public interface HorarioMapper {
         }
         return programacionAcademica.getId();
     }
+
 }

@@ -1,6 +1,7 @@
 package com.examen.controllers;
 
-import com.examen.dtos.HorarioDTO;
+import com.examen.dtos.HorarioDetalladoDTO;
+import com.examen.dtos.horario.HorarioDTO;
 import com.examen.entities.Horario;
 import com.examen.mappers.HorarioMapper;
 import com.examen.services.HorarioService;
@@ -31,6 +32,13 @@ public class HorarioController {
     public List<HorarioDTO> obtenerTodosLosHorarios() {
         return horarioService.obtenerTodosLosHorarios().stream()
                 .map(horarioMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/docente/{docenteId}")
+    public List<HorarioDetalladoDTO> obtenerHorariosPorDocenteId(@PathVariable Long docenteId) {
+        return horarioService.obtenerHorariosPorDocenteId(docenteId).stream()
+                .map(horarioMapper::toDetailedDTO)
                 .collect(Collectors.toList());
     }
 

@@ -26,4 +26,7 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Docente docente;
 }

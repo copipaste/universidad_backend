@@ -1,4 +1,4 @@
-package com.examen.dtos;
+package com.examen.dtos.horario;
 
 import lombok.Data;
 
