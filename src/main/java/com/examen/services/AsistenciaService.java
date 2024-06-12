@@ -42,12 +42,18 @@ public class AsistenciaService {
             return new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "Horario no encontrado", null);
         }
 
+        // Verificar si ya existe una asistencia para el mismo docente, horario y fecha
+        Optional<Asistencia> asistenciaExistente = asistenciaRepository.findByDocenteIdAndHorarioIdAndFecha(docenteId, horarioId, fecha);
+        if (asistenciaExistente.isPresent()) {
+            return new ApiResponse<>(HttpStatus.CONFLICT.value(), "Su asistencia de hoy ya fue registrada", null);
+        }
+
         Horario horario = horarioOpt.get();
         LocalTime horaInicio = horario.getHoraInicio();
         LocalTime horaFin = horario.getHoraFin();
 
         if (!isWithinDistance(horario.getAula().getModulo(), latitud, longitud)) {
-            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Su ubicacion no esta en el rango aceptado", null);
+            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Su ubicación no está en el rango aceptado", null);
         }
 
         if (isWithinTimeRange(horaInicio, horaMarcada, 10)) {
@@ -59,8 +65,6 @@ public class AsistenciaService {
             asistencia.setVirtual(false);
             asistenciaRepository.save(asistencia);
             AsistenciaRespuestaDTO respuesta = new AsistenciaRespuestaDTO(asistencia);
-            System.out.println(respuesta);
-            System.out.println("Dentro de Asistencia Service, antes del retun");
             return new ApiResponse<>(HttpStatus.OK.value(), "Asistencia marcada exitosamente", respuesta);
         } else {
             if (horaMarcada.isAfter(horaInicio.plusMinutes(10)) && horaMarcada.isBefore(horaInicio.plusMinutes(30))) {
@@ -91,7 +95,7 @@ public class AsistenciaService {
             }
         }
 
-        return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Aun no esta en hora para marcar", null);
+        return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Aún no está en hora para marcar", null);
     }
 
     public ApiResponse<Object> marcarAsistenciaVirtual(Long docenteId, LocalTime horaMarcada, LocalDate fecha, Long materiaId, Long horarioId) {
@@ -103,6 +107,12 @@ public class AsistenciaService {
         Optional<Horario> horarioOpt = horarioRepository.findById(horarioId);
         if (horarioOpt.isEmpty()) {
             return new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "Horario no encontrado", null);
+        }
+
+        // Verificar si ya existe una asistencia para el mismo docente, horario y fecha
+        Optional<Asistencia> asistenciaExistente = asistenciaRepository.findByDocenteIdAndHorarioIdAndFecha(docenteId, horarioId, fecha);
+        if (asistenciaExistente.isPresent()) {
+            return new ApiResponse<>(HttpStatus.CONFLICT.value(), "Su asistencia de hoy ya fue registrada", null);
         }
 
         Horario horario = horarioOpt.get();
@@ -147,8 +157,7 @@ public class AsistenciaService {
                 return new ApiResponse<>(HttpStatus.OK.value(), "Falta virtual por tardanza excedida", respuesta);
             }
         }
-
-        return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Aun no esta en hora para marcar", null);
+        return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Aún no está en hora para marcar", null);
     }
 
     private boolean isWithinTimeRange(LocalTime horaInicio, LocalTime horaMarcada, int minutos) {

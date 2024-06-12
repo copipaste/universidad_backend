@@ -1,6 +1,7 @@
 package com.examen.controllers;
 
-import com.examen.dtos.AtrasoDTO;
+import com.examen.dtos.atraso.AtrasoDTO;
+import com.examen.dtos.atraso.CrearAtrasoDTO;
 import com.examen.entities.Atraso;
 import com.examen.mappers.AtrasoMapper;
 import com.examen.services.AtrasoService;
@@ -18,8 +19,8 @@ public class AtrasoController {
     private AtrasoMapper atrasoMapper;
 
     @PostMapping
-    public AtrasoDTO crearAtraso(@RequestParam Long asistenciaId, @RequestParam String motivo) {
-        Atraso atraso = atrasoService.crearAtraso(asistenciaId, motivo);
+    public AtrasoDTO crearAtraso(@RequestBody CrearAtrasoDTO dto) {
+        Atraso atraso = atrasoService.crearAtraso(dto.getAsistenciaId(), dto.getMotivo());
         return atrasoMapper.toDTO(atraso);
     }
 }

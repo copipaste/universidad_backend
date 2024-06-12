@@ -1,4 +1,4 @@
-package com.examen.dtos;
+package com.examen.dtos.atraso;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AtrasoDTO {
-    private Long id;
+public class CrearAtrasoDTO {
     private String motivo;
     private Long asistenciaId;
 }
