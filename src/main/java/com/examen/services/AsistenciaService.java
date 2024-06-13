@@ -60,7 +60,7 @@ public class AsistenciaService {
         LocalTime horaFin = horario.getHoraFin();
 
         if (!isWithinDistance(horario.getAula().getModulo(), latitud, longitud)) {
-            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Su ubicación no está en el rango aceptado", null);
+            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Su ubicacion no esta en el rango aceptado", null);
         }
 
         if (isWithinTimeRange(horaInicio, horaMarcada, 10)) {
@@ -102,7 +102,7 @@ public class AsistenciaService {
             }
         }
 
-        return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Aún no está en hora para marcar", null);
+        return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Aun no esta en hora para marcar", null);
     }
 
     public ApiResponse<Object> marcarAsistenciaVirtual(Long docenteId, LocalTime horaMarcada, LocalDate fecha, Long materiaId, Long horarioId) {
@@ -164,7 +164,7 @@ public class AsistenciaService {
                 return new ApiResponse<>(HttpStatus.OK.value(), "Falta virtual por tardanza excedida", respuesta);
             }
         }
-        return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Aún no está en hora para marcar", null);
+        return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Aun no esta en hora para marcar", null);
     }
 
     private boolean isWithinTimeRange(LocalTime horaInicio, LocalTime horaMarcada, int minutos) {
