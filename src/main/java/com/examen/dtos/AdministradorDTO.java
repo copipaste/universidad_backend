@@ -9,7 +9,6 @@ public class AdministradorDTO {
     private Long userId;  // Añadir userId
     private String name;
     private String email;
-    private String password;
     private LocalDate fechaDeNacimiento;
     private String cargo;
     private String telefono;

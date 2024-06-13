@@ -5,6 +5,7 @@ import com.examen.entities.User;
 import com.examen.repositories.AdministradorRepository;
 import com.examen.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,9 @@ public class AdministradorService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public Administrador guardarAdministrador(Administrador administrador) {
         // Asegurarse de que el usuario existe
         User user = userRepository.findById(administrador.getUser().getId())
@@ -29,6 +33,7 @@ public class AdministradorService {
 
     @Transactional
     public Administrador guardarAdministradorYUsuario(Administrador administrador, User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         User savedUser = userRepository.save(user);
         administrador.setUser(savedUser);
         return administradorRepository.save(administrador);
@@ -44,5 +49,20 @@ public class AdministradorService {
 
     public void eliminarAdministrador(Long id) {
         administradorRepository.deleteById(id);
+    }
+
+    @Transactional
+    public Administrador actualizarAdministrador(Long id, Administrador administrador) {
+        Administrador existente = administradorRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Administrador not found"));
+        existente.setFechaDeNacimiento(administrador.getFechaDeNacimiento());
+        existente.setCargo(administrador.getCargo());
+        existente.setTelefono(administrador.getTelefono());
+        existente.setDireccion(administrador.getDireccion());
+        if (administrador.getUser() != null) {
+            User user = existente.getUser();
+            user.setName(administrador.getUser().getName());
+            userRepository.save(user);
+        }
+        return administradorRepository.save(existente);
     }
 }

@@ -73,4 +73,11 @@ public class AdministradorController {
     public void eliminarAdministrador(@PathVariable Long id) {
         administradorService.eliminarAdministrador(id);
     }
+
+    @PutMapping("/{id}")
+    public AdministradorDTO actualizarAdministrador(@PathVariable Long id, @RequestBody AdministradorDTO administradorDTO) {
+        Administrador administrador = administradorMapper.toEntity(administradorDTO);
+        Administrador administradorActualizado = administradorService.actualizarAdministrador(id, administrador);
+        return administradorMapper.toDTO(administradorActualizado);
+    }
 }

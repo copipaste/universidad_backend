@@ -44,4 +44,13 @@ public class ModuloController {
     public void eliminarModulo(@PathVariable Long id) {
         moduloService.eliminarModulo(id);
     }
+
+    @PutMapping("/{id}")
+    public ModuloDTO actualizarModulo(@PathVariable Long id, @RequestBody ModuloDTO moduloDTO) {
+        Modulo modulo = moduloMapper.toEntity(moduloDTO);
+        Modulo moduloActualizado = moduloService.actualizarModulo(id, modulo);
+        return moduloMapper.toDTO(moduloActualizado);
+    }
 }
+
+

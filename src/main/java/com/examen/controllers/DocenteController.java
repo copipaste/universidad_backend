@@ -72,4 +72,11 @@ public class DocenteController {
     public void eliminarDocente(@PathVariable Long id) {
         docenteService.eliminarDocente(id);
     }
+
+    @PutMapping("/{id}")
+    public DocenteDTO actualizarDocente(@PathVariable Long id, @RequestBody DocenteDTO docenteDTO) {
+        Docente docente = docenteMapper.toEntity(docenteDTO);
+        Docente docenteActualizado = docenteService.actualizarDocente(id, docente);
+        return docenteMapper.toDTO(docenteActualizado);
+    }
 }
