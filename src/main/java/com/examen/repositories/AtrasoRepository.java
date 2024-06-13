@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AtrasoRepository extends JpaRepository<Atraso, Long> {
+    boolean existsByAsistenciaId(Long asistenciaId);
 }

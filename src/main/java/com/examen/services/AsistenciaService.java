@@ -1,7 +1,9 @@
 package com.examen.services;
 
 import com.examen.dtos.ApiResponse;
+import com.examen.dtos.asistencia.AsistenciaDetalleDTO;
 import com.examen.dtos.asistencia.AsistenciaRespuestaDTO;
+import com.examen.dtos.asistencia.RegistroDeAsistenciasDTO;
 import com.examen.entities.*;
 import com.examen.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +12,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
-import java.util.Optional;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.WeekFields;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AsistenciaService {
@@ -30,6 +34,9 @@ public class AsistenciaService {
 
     @Autowired
     private AtrasoRepository atrasoRepository;
+
+    @Autowired
+    private LicenciaRepository licenciaRepository;
 
     public ApiResponse<Object> marcarAsistencia(Long docenteId, LocalTime horaMarcada, LocalDate fecha, double latitud, double longitud, Long materiaId, Long horarioId) {
         Optional<Docente> docenteOpt = docenteRepository.findById(docenteId);
@@ -196,5 +203,95 @@ public class AsistenciaService {
 
     public void eliminarAsistencia(Long id) {
         asistenciaRepository.deleteById(id);
+    }
+
+    public RegistroDeAsistenciasDTO obtenerRegistroDeAsistencias(Long docenteId) {
+        List<Asistencia> asistencias = asistenciaRepository.findByDocenteId(docenteId);
+        List<Falta> faltas = faltasRepository.findByDocenteId(docenteId);
+        List<Licencia> licencias = licenciaRepository.findByDocenteId(docenteId);
+
+        Map<String, List<AsistenciaDetalleDTO>> registro = new HashMap<>();
+
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        for (Asistencia asistencia : asistencias) {
+            String key = generateKey(asistencia.getFecha());
+            String tipo = determineTipo(asistencia);
+
+            AsistenciaDetalleDTO detalle = AsistenciaDetalleDTO.builder()
+                    .tipo(tipo)
+                    .fecha(asistencia.getFecha().format(dateFormatter))
+                    .hora(asistencia.getHora().toString())
+                    .materia(asistencia.getHorario().getProgramacionAcademica().getMateria().getNombre())
+                    .sigla(asistencia.getHorario().getProgramacionAcademica().getMateria().getSigla())
+                    .grupo(asistencia.getHorario().getProgramacionAcademica().getMateria().getGrupo())
+                    .build();
+
+            registro.computeIfAbsent(key, k -> new ArrayList<>()).add(detalle);
+        }
+
+        for (Falta falta : faltas) {
+            String key = generateKey(falta.getFecha());
+            AsistenciaDetalleDTO detalle = AsistenciaDetalleDTO.builder()
+                    .tipo("Falta")
+                    .fecha(falta.getFecha().format(dateFormatter))
+                    .hora("N/A")
+                    .materia(falta.getProgramacionAcademica().getMateria().getNombre())
+                    .sigla(falta.getProgramacionAcademica().getMateria().getSigla())
+                    .grupo(falta.getProgramacionAcademica().getMateria().getGrupo())
+                    .build();
+
+            registro.computeIfAbsent(key, k -> new ArrayList<>()).add(detalle);
+        }
+
+        for (Licencia licencia : licencias) {
+            String key = generateKey(licencia.getFecha());
+            AsistenciaDetalleDTO detalle = AsistenciaDetalleDTO.builder()
+                    .tipo("Falta Justificada")
+                    .fecha(licencia.getFecha().format(dateFormatter))
+                    .hora("N/A")
+                    .materia(licencia.getProgramacionAcademica().getMateria().getNombre())
+                    .sigla(licencia.getProgramacionAcademica().getMateria().getSigla())
+                    .grupo(licencia.getProgramacionAcademica().getMateria().getGrupo())
+                    .build();
+
+            registro.computeIfAbsent(key, k -> new ArrayList<>()).add(detalle);
+        }
+
+        return new RegistroDeAsistenciasDTO(registro);
+    }
+
+    private String generateKey(LocalDate date) {
+        int weekOfMonth = getWeekOfMonth(date);
+        String month = getSpanishMonth(date.getMonthValue());
+        String year = Integer.toString(date.getYear());
+        return String.format("%s_%s_semana %d", year, month, weekOfMonth);
+    }
+
+    private int getWeekOfMonth(LocalDate date) {
+        int dayOfMonth = date.getDayOfMonth();
+        if (dayOfMonth <= 7) {
+            return 1;
+        } else if (dayOfMonth <= 14) {
+            return 2;
+        } else if (dayOfMonth <= 21) {
+            return 3;
+        } else if (dayOfMonth <= 28) {
+            return 4;
+        } else {
+            return 5;
+        }
+    }
+
+    private String getSpanishMonth(int month) {
+        String[] months = {"enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"};
+        return months[month - 1];
+    }
+
+    private String determineTipo(Asistencia asistencia) {
+        if (atrasoRepository.existsByAsistenciaId(asistencia.getId())) {
+            return asistencia.isVirtual() ? "Virtual con atraso" : "Presencial con atraso";
+        }
+        return asistencia.isVirtual() ? "Virtual" : "Presencial";
     }
 }

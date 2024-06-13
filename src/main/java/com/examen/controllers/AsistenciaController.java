@@ -3,6 +3,7 @@ package com.examen.controllers;
 import com.examen.dtos.ApiResponse;
 import com.examen.dtos.asistencia.AsistenciaDTO;
 import com.examen.dtos.asistencia.MarcarAsistenciaDTO;
+import com.examen.dtos.asistencia.RegistroDeAsistenciasDTO;
 import com.examen.entities.Asistencia;
 import com.examen.mappers.AsistenciaMapper;
 import com.examen.services.AsistenciaService;
@@ -51,5 +52,10 @@ public class AsistenciaController {
     @DeleteMapping("/{id}")
     public void eliminarAsistencia(@PathVariable Long id) {
         asistenciaService.eliminarAsistencia(id);
+    }
+
+    @GetMapping("/registro/{docenteId}")
+    public RegistroDeAsistenciasDTO obtenerRegistroDeAsistencias(@PathVariable Long docenteId) {
+        return asistenciaService.obtenerRegistroDeAsistencias(docenteId);
     }
 }
