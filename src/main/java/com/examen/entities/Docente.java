@@ -30,7 +30,7 @@ public class Docente {
     @Column(nullable = false)
     private String direccion;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }

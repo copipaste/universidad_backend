@@ -10,4 +10,6 @@ public class DocenteDTO {
     private String sexo;
     private String direccion;
     private Long userId;
+    private String userName;
+    private String userEmail;
 }

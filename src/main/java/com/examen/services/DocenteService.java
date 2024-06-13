@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.logging.Logger;
 
 @Service
 public class DocenteService {
@@ -39,7 +41,15 @@ public class DocenteService {
         return docenteRepository.findById(id).orElse(null);
     }
 
+    @Transactional
     public void eliminarDocente(Long id) {
-        docenteRepository.deleteById(id);
+        Optional<Docente> docente = docenteRepository.findById(id);
+        if (docente.isPresent()) {
+            System.out.println("Eliminando docente con id: " + id);
+            docenteRepository.deleteById(id);
+            System.out.println("Docente eliminado con éxito");
+        } else {
+            System.out.println("Docente con id " + id + " no encontrado");
+        }
     }
 }

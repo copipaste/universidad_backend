@@ -9,6 +9,8 @@ import org.mapstruct.Mapping;
 public interface DocenteMapper {
 
     @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "user.name", target = "userName")
+    @Mapping(source = "user.email", target = "userEmail")
     DocenteDTO toDTO(Docente docente);
 
     @Mapping(source = "userId", target = "user.id")
