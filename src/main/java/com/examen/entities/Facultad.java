@@ -40,4 +40,8 @@ public class Facultad {
     public void desactivarFacultad() {
         this.active = 0;
     }
+
+    public void activarFacultad() {
+        this.active = 1;
+    }
 }

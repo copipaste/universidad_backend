@@ -37,6 +37,12 @@ public class FacultadService {
         return facultadMapper.toFacultadDto(facultad);
     }
 
+    public FacultadDto activateFacultad(Long id) {
+        Facultad facultad = facultadRepository.getReferenceById(id);
+        facultad.activarFacultad();
+        return facultadMapper.toFacultadDto(facultad);
+    }
+
     public void deactivateFacultad(Long id) {
         Facultad facultad = facultadRepository.getReferenceById(id);
         facultad.desactivarFacultad();

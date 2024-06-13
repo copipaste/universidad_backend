@@ -2,7 +2,6 @@ package com.examen.controllers;
 
 import com.examen.dtos.facultad.CreateFacultadDto;
 import com.examen.dtos.facultad.FacultadDto;
-import com.examen.repositories.FacultadRepository;
 import com.examen.services.FacultadService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -22,7 +21,6 @@ import java.net.URI;
 public class FacultadController {
 
     private final FacultadService facultadService;
-    private final FacultadRepository facultadRepository;
 
     @GetMapping
     public ResponseEntity<Page<FacultadDto>> listarFacultades(Pageable paginacion) {
@@ -48,6 +46,13 @@ public class FacultadController {
                                              @RequestBody @Valid CreateFacultadDto createFacultadDto)
     {
         return ResponseEntity.ok(facultadService.updateFacultad(id, createFacultadDto));
+    }
+
+    @PutMapping("/{id}/activar")
+    @Transactional
+    public ResponseEntity<FacultadDto> activarFacultad(@PathVariable Long id)
+    {
+        return ResponseEntity.ok(facultadService.activateFacultad(id));
     }
 
     //Eliminacion Logica
