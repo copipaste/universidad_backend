@@ -50,6 +50,13 @@ public class CarreraController {
         return ResponseEntity.ok(carreraService.updateCarrera(id, createCarreraDto));
     }
 
+    @PutMapping("/{id}/activar")
+    @Transactional
+    public ResponseEntity<CarreraDto> activarCarrera(@PathVariable Long id)
+    {
+        return ResponseEntity.ok(carreraService.activateCarrera(id));
+    }
+
     //Eliminacion Logica
     @DeleteMapping("/{id}")
     @Transactional

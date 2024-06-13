@@ -40,6 +40,10 @@ public class Carrera {
         }
     }
 
+    public void activarCarrera() {
+        this.active = 1;
+    }
+
     public void desactivarCarrera() {
         this.active = 0;
     }

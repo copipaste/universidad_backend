@@ -42,6 +42,12 @@ public class CarreraService {
         return carreraMapper.toCarreraDto(carrera);
     }
 
+    public CarreraDto activateCarrera(Long id) {
+        Carrera carrera = carreraRepository.getReferenceById(id);
+        carrera.activarCarrera();
+        return carreraMapper.toCarreraDto(carrera);
+    }
+
     public void deactivateCarrera(Long id) {
         Carrera carrera = carreraRepository.getReferenceById(id);
         carrera.desactivarCarrera();
