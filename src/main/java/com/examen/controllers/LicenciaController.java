@@ -27,6 +27,11 @@ public class LicenciaController {
         return licenciaMapper.toDTO(licenciaGuardada);
     }
 
+    @PutMapping("/{id}/aprobar")
+    public LicenciaDTO aprobarLicencia(@PathVariable Long id) {
+        return licenciaMapper.toDTO(licenciaService.aprobarLicencia(id));
+    }
+
     @GetMapping
     public List<LicenciaDTO> obtenerTodasLasLicencias() {
         return licenciaService.obtenerTodasLasLicencias().stream()

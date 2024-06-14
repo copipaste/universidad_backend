@@ -35,4 +35,8 @@ public class Licencia {
     @ManyToOne
     @JoinColumn(name = "prog_ac_id", nullable = false)
     private ProgramacionAcademica programacionAcademica;
+
+    public void aprobarLicencia() {
+        this.efectuada = true;
+    }
 }
