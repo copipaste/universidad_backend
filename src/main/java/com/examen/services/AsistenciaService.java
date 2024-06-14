@@ -38,6 +38,9 @@ public class AsistenciaService {
     @Autowired
     private LicenciaRepository licenciaRepository;
 
+    @Autowired
+    private FaltaService faltaService;
+
     public ApiResponse<Object> marcarAsistencia(Long docenteId, LocalTime horaMarcada, LocalDate fecha, double latitud, double longitud, Long materiaId, Long horarioId) {
         Optional<Docente> docenteOpt = docenteRepository.findById(docenteId);
         if (docenteOpt.isEmpty()) {
@@ -72,6 +75,9 @@ public class AsistenciaService {
             asistencia.setVirtual(false);
             asistenciaRepository.save(asistencia);
             AsistenciaRespuestaDTO respuesta = new AsistenciaRespuestaDTO(asistencia);
+
+            faltaService.eliminarFalta(fecha, horario.getProgramacionAcademica().getId());
+
             return new ApiResponse<>(HttpStatus.OK.value(), "Asistencia marcada exitosamente", respuesta);
         } else {
             if (horaMarcada.isAfter(horaInicio.plusMinutes(10)) && horaMarcada.isBefore(horaInicio.plusMinutes(30))) {
@@ -83,6 +89,9 @@ public class AsistenciaService {
                 asistencia.setVirtual(false);
                 asistenciaRepository.save(asistencia);
                 AsistenciaRespuestaDTO respuesta = new AsistenciaRespuestaDTO(asistencia);
+
+                faltaService.eliminarFalta(fecha, horario.getProgramacionAcademica().getId());
+
                 return new ApiResponse<>(209, "Asistencia marcada con atraso", respuesta); // 209 indica Atraso
             } else if (horaMarcada.isAfter(horaInicio.plusMinutes(30)) && horaMarcada.isBefore(horaFin)) {
                 Asistencia asistencia = new Asistencia();
@@ -93,10 +102,11 @@ public class AsistenciaService {
                 asistencia.setVirtual(false);
                 asistenciaRepository.save(asistencia);
 
-                Falta falta = new Falta();
-                falta.setFecha(fecha);
-                falta.setProgramacionAcademica(horario.getProgramacionAcademica());
-                faltasRepository.save(falta);
+//                Falta falta = new Falta();
+//                falta.setFecha(fecha);
+//                falta.setProgramacionAcademica(horario.getProgramacionAcademica());
+//                faltasRepository.save(falta);
+
                 AsistenciaRespuestaDTO respuesta = new AsistenciaRespuestaDTO(asistencia);
                 return new ApiResponse<>(HttpStatus.OK.value(), "Falta por tardanza excedida", respuesta);
             }
@@ -135,6 +145,9 @@ public class AsistenciaService {
             asistencia.setVirtual(true);
             asistenciaRepository.save(asistencia);
             AsistenciaRespuestaDTO respuesta = new AsistenciaRespuestaDTO(asistencia);
+
+            faltaService.eliminarFalta(fecha, horario.getProgramacionAcademica().getId());
+
             return new ApiResponse<>(HttpStatus.OK.value(), "Asistencia virtual marcada exitosamente", respuesta);
         } else {
             if (horaMarcada.isAfter(horaInicio.plusMinutes(10)) && horaMarcada.isBefore(horaInicio.plusMinutes(30))) {
@@ -146,6 +159,9 @@ public class AsistenciaService {
                 asistencia.setVirtual(true);
                 asistenciaRepository.save(asistencia);
                 AsistenciaRespuestaDTO respuesta = new AsistenciaRespuestaDTO(asistencia);
+
+                faltaService.eliminarFalta(fecha, horario.getProgramacionAcademica().getId());
+
                 return new ApiResponse<>(209, "Asistencia virtual marcada con atraso", respuesta); // 209 indica Atraso
             } else if (horaMarcada.isAfter(horaInicio.plusMinutes(30)) && horaMarcada.isBefore(horaFin)) {
                 Asistencia asistencia = new Asistencia();
@@ -156,10 +172,10 @@ public class AsistenciaService {
                 asistencia.setVirtual(true);
                 asistenciaRepository.save(asistencia);
 
-                Falta falta = new Falta();
-                falta.setFecha(fecha);
-                falta.setProgramacionAcademica(horario.getProgramacionAcademica());
-                faltasRepository.save(falta);
+//                Falta falta = new Falta();
+//                falta.setFecha(fecha);
+//                falta.setProgramacionAcademica(horario.getProgramacionAcademica());
+//                faltasRepository.save(falta);
                 AsistenciaRespuestaDTO respuesta = new AsistenciaRespuestaDTO(asistencia);
                 return new ApiResponse<>(HttpStatus.OK.value(), "Falta virtual por tardanza excedida", respuesta);
             }
