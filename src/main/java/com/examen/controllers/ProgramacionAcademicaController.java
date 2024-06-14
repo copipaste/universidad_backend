@@ -22,6 +22,7 @@ public class ProgramacionAcademicaController {
 
     @PostMapping
     public ProgramacionAcademicaDTO crearProgramacionAcademica(@RequestBody ProgramacionAcademicaDTO programacionAcademicaDTO) {
+        System.out.println(programacionAcademicaDTO);
         ProgramacionAcademica programacionAcademica = programacionAcademicaMapper.toEntity(programacionAcademicaDTO);
         ProgramacionAcademica programacionAcademicaGuardada = programacionAcademicaService.guardarProgramacionAcademica(programacionAcademica);
         return programacionAcademicaMapper.toDTO(programacionAcademicaGuardada);

@@ -3,7 +3,9 @@ package com.examen.controllers;
 import com.examen.dtos.HorarioDetalladoDTO;
 import com.examen.dtos.horario.HorarioDTO;
 import com.examen.entities.Horario;
+import com.examen.entities.ProgramacionAcademica;
 import com.examen.mappers.HorarioMapper;
+import com.examen.repositories.ProgramacionAcademicaRepository;
 import com.examen.services.HorarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +22,15 @@ public class HorarioController {
 
     @Autowired
     private HorarioMapper horarioMapper;
+    @Autowired
+    private ProgramacionAcademicaRepository programacionAcademicaRepository;
 
     @PostMapping
     public HorarioDTO crearHorario(@RequestBody HorarioDTO horarioDTO) {
         Horario horario = horarioMapper.toEntity(horarioDTO);
+        ProgramacionAcademica PA = programacionAcademicaRepository.getReferenceById(
+                horarioDTO.getProgAcId());
+        horario.setProgramacionAcademica(PA);
         Horario horarioGuardado = horarioService.guardarHorario(horario);
         return horarioMapper.toDTO(horarioGuardado);
     }

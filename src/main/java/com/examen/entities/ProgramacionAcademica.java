@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -23,6 +25,12 @@ public class ProgramacionAcademica {
 
     @Column(nullable = false)
     private String periodo;
+
+    @Column(name = "fecha_inicio", nullable = false)
+    private LocalDate fechaInicio;
+
+    @Column(name = "fecha_fin", nullable = false)
+    private LocalDate fechaFin;
 
     @ManyToOne
     @JoinColumn(name = "materia_id", nullable = false)

@@ -1,7 +1,13 @@
 package com.examen.services;
 
+import com.examen.dtos.horario.HorarioDTO;
+import com.examen.entities.Facultad;
 import com.examen.entities.Horario;
+import com.examen.entities.ProgramacionAcademica;
+import com.examen.mappers.HorarioMapper;
 import com.examen.repositories.HorarioRepository;
+import com.examen.repositories.ProgramacionAcademicaRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +19,18 @@ public class HorarioService {
     @Autowired
     private HorarioRepository horarioRepository;
 
+    @Autowired
+    private FaltaService faltaService;
+    @Autowired
+    private HorarioMapper horarioMapper;
+    @Autowired
+    private ProgramacionAcademicaRepository programacionAcademicaRepository;
+
+    @Transactional
     public Horario guardarHorario(Horario horario) {
-        return horarioRepository.save(horario);
+        Horario h = horarioRepository.save(horario);
+        faltaService.generarClases(horario.getId());
+        return h;
     }
 
     public List<Horario> obtenerTodosLosHorarios() {
