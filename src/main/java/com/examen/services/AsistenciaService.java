@@ -1,5 +1,6 @@
 package com.examen.services;
 
+import org.springframework.transaction.annotation.Transactional;
 import com.examen.dtos.ApiResponse;
 import com.examen.dtos.asistencia.AsistenciaDetalleDTO;
 import com.examen.dtos.asistencia.AsistenciaRespuestaDTO;
@@ -41,6 +42,7 @@ public class AsistenciaService {
     @Autowired
     private FaltaService faltaService;
 
+    @Transactional
     public ApiResponse<Object> marcarAsistencia(Long docenteId, LocalTime horaMarcada, LocalDate fecha, double latitud, double longitud, Long materiaId, Long horarioId) {
         Optional<Docente> docenteOpt = docenteRepository.findById(docenteId);
         if (docenteOpt.isEmpty()) {
@@ -114,7 +116,7 @@ public class AsistenciaService {
 
         return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Aun no esta en hora para marcar", null);
     }
-
+    @Transactional
     public ApiResponse<Object> marcarAsistenciaVirtual(Long docenteId, LocalTime horaMarcada, LocalDate fecha, Long materiaId, Long horarioId) {
         Optional<Docente> docenteOpt = docenteRepository.findById(docenteId);
         if (docenteOpt.isEmpty()) {
