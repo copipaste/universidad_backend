@@ -1,5 +1,6 @@
 package com.examen.dtos;
 
+import com.examen.entities.Licencia;
 import lombok.Data;
 
 import java.time.LocalDate;

@@ -27,6 +27,10 @@ public class LicenciaService {
         return licenciaRepository.findAll();
     }
 
+    public List<Licencia> obtenerLicenciasPorDocente(Long docenteId) {
+        return licenciaRepository.findByDocenteId(docenteId);
+    }
+
     public Licencia obtenerLicenciaPorId(Long id) {
         return licenciaRepository.findById(id).orElse(null);
     }

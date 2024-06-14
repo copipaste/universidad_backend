@@ -17,4 +17,6 @@ public interface HorarioRepository extends JpaRepository<Horario, Long> {
             "JOIN FETCH pa.materia m " +
             "WHERE pa.docente.id = :docenteId")
     List<Horario> findHorariosByDocenteId(Long docenteId);
+
+    Horario findByProgramacionAcademicaIdAndDia(Long programacionAcademicaId, String dia);
 }

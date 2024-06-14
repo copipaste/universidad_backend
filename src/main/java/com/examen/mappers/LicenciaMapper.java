@@ -20,6 +20,11 @@ public interface LicenciaMapper {
     })
     Licencia toEntity(LicenciaDTO licenciaDTO);
 
+
+//    @Mapping(source = "programacionAcademica.materia", target = "materiaDto")
+//    @Mapping(source = "programacionAcademica.horario", target = "horarioDTO")
+//    LicenciaRespuestaDTO toLicenciaRespuestaDTO(Licencia licencia);
+
     default ProgramacionAcademica mapProgramacionAcademica(Long id) {
         if (id == null) {
             return null;

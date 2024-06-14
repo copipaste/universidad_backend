@@ -115,7 +115,7 @@ public class FaltaService {
         }
     }
 
-    private String getDayByDate(LocalDate fecha) {
+    public String getDayByDate(LocalDate fecha) {
         DayOfWeek day = fecha.getDayOfWeek();
         switch (day) {
             case MONDAY:
