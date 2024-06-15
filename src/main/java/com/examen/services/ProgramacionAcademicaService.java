@@ -21,6 +21,10 @@ public class ProgramacionAcademicaService {
         return programacionAcademicaRepository.findAll();
     }
 
+    public List<ProgramacionAcademica> obtenerPAsPorDocenteId(Long docenteId) {
+        return programacionAcademicaRepository.findByDocenteId(docenteId);
+    }
+
     public ProgramacionAcademica obtenerProgramacionAcademicaPorId(Long id) {
         return programacionAcademicaRepository.findById(id).orElse(null);
     }

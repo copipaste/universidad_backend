@@ -11,4 +11,7 @@ import java.util.List;
 public interface LicenciaRepository extends JpaRepository<Licencia, Long> {
     @Query("SELECT l FROM Licencia l WHERE l.programacionAcademica.docente.id = :docenteId")
     List<Licencia> findByDocenteId(@Param("docenteId") Long docenteId);
+
+    @Query("SELECT l FROM Licencia l WHERE l.programacionAcademica.docente.id = :docenteId ORDER BY l.fecha DESC")
+    List<Licencia> findByDocenteIdOrderByFechaDesc(@Param("docenteId") Long docenteId);
 }

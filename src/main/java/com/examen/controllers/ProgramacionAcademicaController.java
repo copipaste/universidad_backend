@@ -35,6 +35,14 @@ public class ProgramacionAcademicaController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/docente/{id}")
+    public List<ProgramacionAcademicaDTO> obtenerPAsPorDocente(@PathVariable Long id) {
+
+        return programacionAcademicaService.obtenerPAsPorDocenteId(id).stream()
+                .map(programacionAcademicaMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
     @GetMapping("/{id}")
     public ProgramacionAcademicaDTO obtenerProgramacionAcademicaPorId(@PathVariable Long id) {
         ProgramacionAcademica programacionAcademica = programacionAcademicaService.obtenerProgramacionAcademicaPorId(id);

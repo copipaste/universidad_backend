@@ -230,8 +230,8 @@ public class AsistenciaService {
 //        List<Licencia> licencias = licenciaRepository.findByDocenteId(docenteId);
 
         List<Asistencia> asistencias = asistenciaRepository.findByDocenteIdOrderByFechaDesc(docenteId);
-        List<Falta> faltas = faltasRepository.findByDocenteId(docenteId);
-        List<Licencia> licencias = licenciaRepository.findByDocenteId(docenteId);
+        List<Falta> faltas = faltasRepository.findByDocenteIdOrderByFechaDesc(docenteId);
+        List<Licencia> licencias = licenciaRepository.findByDocenteIdOrderByFechaDesc(docenteId);
 
         Map<String, List<AsistenciaDetalleDTO>> registro = new HashMap<>();
 
