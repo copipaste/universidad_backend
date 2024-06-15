@@ -1,5 +1,6 @@
 package com.examen.services;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import com.examen.dtos.ApiResponse;
 import com.examen.dtos.asistencia.AsistenciaDetalleDTO;
@@ -212,7 +213,7 @@ public class AsistenciaService {
     }
 
     public List<Asistencia> obtenerTodasLasAsistencias() {
-        return asistenciaRepository.findAll();
+        return asistenciaRepository.findAll(Sort.by(Sort.Direction.DESC, "fecha"));
     }
 
     public Asistencia obtenerAsistenciaPorId(Long id) {
@@ -224,7 +225,11 @@ public class AsistenciaService {
     }
 
     public RegistroDeAsistenciasDTO obtenerRegistroDeAsistencias(Long docenteId) {
-        List<Asistencia> asistencias = asistenciaRepository.findByDocenteId(docenteId);
+//        List<Asistencia> asistencias = asistenciaRepository.findByDocenteId(docenteId);
+//        List<Falta> faltas = faltasRepository.findByDocenteId(docenteId);
+//        List<Licencia> licencias = licenciaRepository.findByDocenteId(docenteId);
+
+        List<Asistencia> asistencias = asistenciaRepository.findByDocenteIdOrderByFechaDesc(docenteId);
         List<Falta> faltas = faltasRepository.findByDocenteId(docenteId);
         List<Licencia> licencias = licenciaRepository.findByDocenteId(docenteId);
 

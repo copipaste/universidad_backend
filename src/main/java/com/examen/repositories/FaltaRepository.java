@@ -15,6 +15,9 @@ public interface FaltaRepository extends JpaRepository<Falta, Long> {
     @Query("SELECT f FROM Falta f WHERE f.programacionAcademica.docente.id = :docenteId")
     List<Falta> findByDocenteId(@Param("docenteId") Long docenteId);
 
+    @Query("SELECT f FROM Falta f WHERE f.programacionAcademica.docente.id = :docenteId ORDER BY f.fecha DESC")
+    List<Falta> findByDocenteIdOrderByFechaDesc(@Param("docenteId") Long docenteId);
+
 //    @Query("SELECT f FROM Falta f WHERE f.programacionAcademica.id = :progAcId")
 //    List<Falta> findByPA(@Param("progAcId") Long progAcId);
 //

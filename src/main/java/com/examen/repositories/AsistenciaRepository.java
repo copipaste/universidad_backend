@@ -16,4 +16,8 @@ public interface AsistenciaRepository extends JpaRepository<Asistencia, Long> {
 
     @Query("SELECT a FROM Asistencia a WHERE a.docente.id = :docenteId")
     List<Asistencia> findByDocenteId(@Param("docenteId") Long docenteId);
+
+    List<Asistencia> findAllByOrderByFechaDesc();
+
+    List<Asistencia> findByDocenteIdOrderByFechaDesc(Long docenteId);
 }
