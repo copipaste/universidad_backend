@@ -1,18 +1,17 @@
 package com.examen.services;
 
+import com.examen.dtos.DocenteDTO;
 import com.examen.dtos.MateriaDto;
 import com.examen.dtos.ProgramacionAcademicaDTO;
 import com.examen.dtos.falta.FaltaDTO;
 import com.examen.dtos.falta.FaltaPorDocenteRespDTO;
+import com.examen.dtos.falta.FaltaRespDetalladaDTO;
 import com.examen.dtos.horario.HorarioDTO;
 import com.examen.entities.Docente;
 import com.examen.entities.Falta;
 import com.examen.entities.Horario;
 import com.examen.entities.ProgramacionAcademica;
-import com.examen.mappers.FaltaMapper;
-import com.examen.mappers.HorarioMapper;
-import com.examen.mappers.MateriaMapper;
-import com.examen.mappers.ProgramacionAcademicaMapper;
+import com.examen.mappers.*;
 import com.examen.repositories.DocenteRepository;
 import com.examen.repositories.FaltaRepository;
 import com.examen.repositories.HorarioRepository;
@@ -48,8 +47,12 @@ public class FaltaService {
 
     @Autowired
     private ProgramacionAcademicaMapper programacionAcademicaMapper;
+
     @Autowired
     private MateriaMapper materiaMapper;
+
+    @Autowired
+    private DocenteMapper docenteMapper;
 
     public Falta guardarFalta(Falta falta) {
         return faltaRepository.save(falta);
@@ -67,15 +70,18 @@ public class FaltaService {
         faltaRepository.deleteById(id);
     }
 
-    public List<Falta> getFaltasReporte(Long progAcId, LocalDate fechaInicio, LocalDate fechaFin) {
+    public List<FaltaRespDetalladaDTO> getFaltasReporte(Long progAcId, LocalDate fechaInicio, LocalDate fechaFin) {
         LocalDate today = LocalDate.now();
+        List<Falta> faltas = new ArrayList<>();
         if (progAcId == null && fechaInicio == null && fechaFin == null) {
-            return faltaRepository.findByFechaLessThanEqualOrderByFechaDesc(today);
+            faltas = faltaRepository.findByFechaLessThanEqualOrderByFechaDesc(today);
+            return toFaltaRespDetalladaDTOS(faltas);
         }
 
         if (progAcId != null && fechaInicio == null && fechaFin == null) {
-            return faltaRepository
+            faltas = faltaRepository
                     .findByProgramacionAcademicaIdAndFechaLessThanEqualOrderByFechaDesc(progAcId, today);
+            return toFaltaRespDetalladaDTOS(faltas);
         }
 
         if (fechaInicio != null || fechaFin != null){
@@ -91,12 +97,41 @@ public class FaltaService {
             }
         }
         if (progAcId == null) {
-            return faltaRepository
+            faltas = faltaRepository
                     .findByFechaBetweenOrderByFechaDesc(fechaInicio, fechaFin);
+            return toFaltaRespDetalladaDTOS(faltas);
         }
 
-        return faltaRepository
+        faltas = faltaRepository
                 .findByProgramacionAcademicaIdAndFechaBetweenOrderByFechaDesc(progAcId, fechaInicio, fechaFin);
+        return toFaltaRespDetalladaDTOS(faltas);
+    }
+
+    public List<FaltaRespDetalladaDTO> toFaltaRespDetalladaDTOS(List<Falta> faltas) {
+        List<FaltaRespDetalladaDTO> flist = new ArrayList<>();
+        for (Falta falta : faltas) {
+            String dia = getDayByDate(falta.getFecha());
+            ProgramacionAcademica pa = falta.getProgramacionAcademica();
+            HorarioDTO horarioDTO = horarioMapper.toDTO(
+                    horarioRepository
+                            .findByProgramacionAcademicaIdAndDia(pa.getId(),dia)
+            );
+            ProgramacionAcademicaDTO paDTO = programacionAcademicaMapper.toDTO(pa);
+            DocenteDTO docenteDTO = docenteMapper.toDTO(pa.getDocente());
+            MateriaDto materiaDto = materiaMapper.toMateriaDto(
+                    falta.getProgramacionAcademica().getMateria()
+            );
+            FaltaRespDetalladaDTO f = new FaltaRespDetalladaDTO(
+                    falta.getId(),
+                    falta.getFecha(),
+                    paDTO,
+                    docenteDTO,
+                    materiaDto,
+                    horarioDTO
+            );
+            flist.add(f);
+        }
+        return  flist;
     }
 
     public List<FaltaPorDocenteRespDTO> getFaltasPorDocente(Long docenteId, LocalDate fechaInicio, LocalDate fechaFin) {

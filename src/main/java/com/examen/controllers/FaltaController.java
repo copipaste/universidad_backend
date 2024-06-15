@@ -2,6 +2,7 @@ package com.examen.controllers;
 
 import com.examen.dtos.falta.FaltaDTO;
 import com.examen.dtos.falta.FaltaPorDocenteRespDTO;
+import com.examen.dtos.falta.FaltaRespDetalladaDTO;
 import com.examen.entities.Falta;
 import com.examen.mappers.FaltaMapper;
 import com.examen.services.FaltaService;
@@ -37,12 +38,11 @@ public class FaltaController {
     }
 
     @GetMapping("/reporte")
-    public List<FaltaDTO> getFaltasByParams(@RequestParam(required = false) Long pa,
-                                            @RequestParam(required = false) LocalDate fecha_inicio,
-                                            @RequestParam(required = false) LocalDate fecha_fin) {
+    public List<FaltaRespDetalladaDTO> getFaltasByParams(@RequestParam(required = false) Long pa,
+                                                         @RequestParam(required = false) LocalDate fecha_inicio,
+                                                         @RequestParam(required = false) LocalDate fecha_fin) {
 
-        return faltaService.getFaltasReporte(pa,fecha_inicio, fecha_fin)
-                .stream().map(faltaMapper::toDTO).toList();
+        return faltaService.getFaltasReporte(pa,fecha_inicio, fecha_fin);
     }
 
     @GetMapping("/docente/{id}")
