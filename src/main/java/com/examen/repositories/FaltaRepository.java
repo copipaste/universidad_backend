@@ -1,5 +1,6 @@
 package com.examen.repositories;
 
+import com.examen.entities.Docente;
 import com.examen.entities.Falta;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -28,6 +29,14 @@ public interface FaltaRepository extends JpaRepository<Falta, Long> {
 //    List<Falta> findByFilters(@Param("progAcId") Long progAcId,
 //                              @Param("fechaInicio") LocalDate fechaInicio,
 //                              @Param("fechaFin") LocalDate fechaFin);
+
+    List<Falta> findByProgramacionAcademicaDocenteAndFechaLessThanEqualOrderByFechaDesc(
+            Docente docente, LocalDate fecha
+    );
+
+    List<Falta> findByProgramacionAcademicaDocenteAndFechaBetweenOrderByFechaDesc(
+            Docente docente, LocalDate fechaInicial, LocalDate fechaFinal
+    );
 
     List<Falta> findByFechaLessThanEqualOrderByFechaDesc(LocalDate fecha);
 

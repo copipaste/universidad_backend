@@ -1,15 +1,23 @@
 package com.examen.services;
 
-import com.examen.dtos.FaltaDTO;
+import com.examen.dtos.MateriaDto;
+import com.examen.dtos.ProgramacionAcademicaDTO;
+import com.examen.dtos.falta.FaltaDTO;
+import com.examen.dtos.falta.FaltaPorDocenteRespDTO;
+import com.examen.dtos.horario.HorarioDTO;
+import com.examen.entities.Docente;
 import com.examen.entities.Falta;
 import com.examen.entities.Horario;
 import com.examen.entities.ProgramacionAcademica;
 import com.examen.mappers.FaltaMapper;
+import com.examen.mappers.HorarioMapper;
+import com.examen.mappers.MateriaMapper;
+import com.examen.mappers.ProgramacionAcademicaMapper;
+import com.examen.repositories.DocenteRepository;
 import com.examen.repositories.FaltaRepository;
 import com.examen.repositories.HorarioRepository;
 import com.examen.repositories.ProgramacionAcademicaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -28,8 +36,20 @@ public class FaltaService {
 
     @Autowired
     private ProgramacionAcademicaRepository programacionAcademicaRepository;
+
     @Autowired
     private FaltaMapper faltaMapper;
+
+    @Autowired
+    private DocenteRepository docenteRepository;
+
+    @Autowired
+    private HorarioMapper horarioMapper;
+
+    @Autowired
+    private ProgramacionAcademicaMapper programacionAcademicaMapper;
+    @Autowired
+    private MateriaMapper materiaMapper;
 
     public Falta guardarFalta(Falta falta) {
         return faltaRepository.save(falta);
@@ -77,6 +97,62 @@ public class FaltaService {
 
         return faltaRepository
                 .findByProgramacionAcademicaIdAndFechaBetweenOrderByFechaDesc(progAcId, fechaInicio, fechaFin);
+    }
+
+    public List<FaltaPorDocenteRespDTO> getFaltasPorDocente(Long docenteId, LocalDate fechaInicio, LocalDate fechaFin) {
+        LocalDate today = LocalDate.now();
+        Docente docente = docenteRepository.getReferenceById(docenteId);
+        List<Falta> faltas = new ArrayList<>();
+        if (fechaInicio == null && fechaFin == null) {
+            faltas = faltaRepository.findByProgramacionAcademicaDocenteAndFechaLessThanEqualOrderByFechaDesc(
+                    docente, today
+            );
+        }
+
+        if (fechaInicio == null && fechaFin != null) {
+            fechaInicio = fechaFin;
+        }
+        if (fechaInicio != null && fechaFin == null) {
+            fechaFin = fechaInicio;
+        }
+
+        if (fechaFin != null && fechaFin.isAfter(today)) {
+            fechaFin = today;
+        }
+
+        if (fechaInicio != null) {
+            faltas = faltaRepository
+                    .findByProgramacionAcademicaDocenteAndFechaBetweenOrderByFechaDesc(
+                            docente, fechaInicio, fechaFin
+                    );
+        }
+
+        return toFaltaPorDocenteRespDTO(faltas);
+    }
+
+    private List<FaltaPorDocenteRespDTO> toFaltaPorDocenteRespDTO(List<Falta> faltas) {
+        List<FaltaPorDocenteRespDTO> flist = new ArrayList<>();
+        for (Falta falta : faltas) {
+            String dia = getDayByDate(falta.getFecha());
+            ProgramacionAcademica pa = falta.getProgramacionAcademica();
+            HorarioDTO horarioDTO = horarioMapper.toDTO(
+                    horarioRepository
+                            .findByProgramacionAcademicaIdAndDia(pa.getId(),dia)
+            );
+            ProgramacionAcademicaDTO paDTO = programacionAcademicaMapper.toDTO(pa);
+            MateriaDto materiaDto = materiaMapper.toMateriaDto(
+                    falta.getProgramacionAcademica().getMateria()
+            );
+            FaltaPorDocenteRespDTO f = new FaltaPorDocenteRespDTO(
+                    falta.getId(),
+                    falta.getFecha(),
+                    paDTO,
+                    horarioDTO,
+                    materiaDto
+            );
+            flist.add(f);
+        }
+        return flist;
     }
 
     public void eliminarFalta(LocalDate fecha, Long progAcId) {

@@ -1,6 +1,7 @@
 package com.examen.mappers;
 
-import com.examen.dtos.FaltaDTO;
+import com.examen.dtos.falta.FaltaDTO;
+import com.examen.dtos.falta.FaltaPorDocenteRespDTO;
 import com.examen.entities.Falta;
 import com.examen.entities.ProgramacionAcademica;
 import org.mapstruct.Mapper;
@@ -19,6 +20,13 @@ public interface FaltaMapper {
             @Mapping(source = "progAcId", target = "programacionAcademica")
     })
     Falta toEntity(FaltaDTO faltaDTO);
+
+//    @Mappings({
+//        @Mapping(source = "programacionAcademica", target = "programacionAcademicaDTO"),
+//        @Mapping(source = "programacionAcademica.materia.class", target = "materiaDTO"),
+//        @Mapping(source = "programacionAcademica.horario.class", target = "horarioDTO")
+//    })
+//    FaltaPorDocenteRespDTO toFaltaPorDocenteDTO(Falta falta);
 
     default ProgramacionAcademica mapProgramacionAcademica(Long id) {
         if (id == null) {

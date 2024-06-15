@@ -1,16 +1,14 @@
 package com.examen.controllers;
 
-import com.examen.dtos.FaltaDTO;
+import com.examen.dtos.falta.FaltaDTO;
+import com.examen.dtos.falta.FaltaPorDocenteRespDTO;
 import com.examen.entities.Falta;
 import com.examen.mappers.FaltaMapper;
 import com.examen.services.FaltaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
-import java.beans.PropertyEditorSupport;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +36,6 @@ public class FaltaController {
                 .collect(Collectors.toList());
     }
 
-    //todo: Agregar query parameters por docente, materia
     @GetMapping("/reporte")
     public List<FaltaDTO> getFaltasByParams(@RequestParam(required = false) Long pa,
                                             @RequestParam(required = false) LocalDate fecha_inicio,
@@ -46,6 +43,15 @@ public class FaltaController {
 
         return faltaService.getFaltasReporte(pa,fecha_inicio, fecha_fin)
                 .stream().map(faltaMapper::toDTO).toList();
+    }
+
+    @GetMapping("/docente/{id}")
+    public List<FaltaPorDocenteRespDTO> getFaltasPorDocente(
+            @PathVariable Long id,
+            @RequestParam(required = false) LocalDate fecha_inicio,
+            @RequestParam(required = false) LocalDate fecha_fin) {
+
+        return faltaService.getFaltasPorDocente(id, fecha_inicio, fecha_fin);
     }
 
     @GetMapping("/{id}")
