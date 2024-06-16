@@ -229,8 +229,12 @@ public class AsistenciaService {
 //        List<Falta> faltas = faltasRepository.findByDocenteId(docenteId);
 //        List<Licencia> licencias = licenciaRepository.findByDocenteId(docenteId);
 
+        LocalDate today = LocalDate.now();
         List<Asistencia> asistencias = asistenciaRepository.findByDocenteIdOrderByFechaDesc(docenteId);
-        List<Falta> faltas = faltasRepository.findByDocenteIdOrderByFechaDesc(docenteId);
+        List<Falta> faltas = faltasRepository
+                .findByProgramacionAcademicaDocenteIdAndFechaLessThanEqualOrderByFechaDesc(
+                        docenteId, today
+                );
         List<Licencia> licencias = licenciaRepository.findByDocenteIdOrderByFechaDesc(docenteId);
 
         Map<String, List<AsistenciaDetalleDTO>> registro = new HashMap<>();
@@ -282,6 +286,96 @@ public class AsistenciaService {
         }
 
         return new RegistroDeAsistenciasDTO(registro);
+    }
+
+    public RegistroDeAsistenciasDTO getAsistenciasOrdenado(Long docenteId) {
+        LocalDate today = LocalDate.now();
+        List<Asistencia> asistencias = asistenciaRepository.findByDocenteIdOrderByFechaDesc(docenteId);
+        List<Falta> faltas = faltasRepository
+                .findByProgramacionAcademicaDocenteIdAndFechaLessThanEqualOrderByFechaDesc(
+                        docenteId, today
+                );
+        List<Licencia> licencias = licenciaRepository.findByDocenteIdOrderByFechaDesc(docenteId);
+
+        Map<String, List<AsistenciaDetalleDTO>> registro = new HashMap<>();
+
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        for (Asistencia asistencia : asistencias) {
+            String key = generateKey(asistencia.getFecha());
+            String tipo = determineTipo(asistencia);
+
+            AsistenciaDetalleDTO detalle = AsistenciaDetalleDTO.builder()
+                    .tipo(tipo)
+                    .fecha(asistencia.getFecha().format(dateFormatter))
+                    .hora(asistencia.getHora().toString())
+                    .materia(asistencia.getHorario().getProgramacionAcademica().getMateria().getNombre())
+                    .sigla(asistencia.getHorario().getProgramacionAcademica().getMateria().getSigla())
+                    .grupo(asistencia.getHorario().getProgramacionAcademica().getMateria().getGrupo())
+                    .build();
+
+            registro.computeIfAbsent(key, k -> new ArrayList<>()).add(detalle);
+        }
+
+        for (Falta falta : faltas) {
+            String key = generateKey(falta.getFecha());
+            AsistenciaDetalleDTO detalle = AsistenciaDetalleDTO.builder()
+                    .tipo("Falta")
+                    .fecha(falta.getFecha().format(dateFormatter))
+                    .hora("N/A")
+                    .materia(falta.getProgramacionAcademica().getMateria().getNombre())
+                    .sigla(falta.getProgramacionAcademica().getMateria().getSigla())
+                    .grupo(falta.getProgramacionAcademica().getMateria().getGrupo())
+                    .build();
+
+            registro.computeIfAbsent(key, k -> new ArrayList<>()).add(detalle);
+        }
+
+        for (Licencia licencia : licencias) {
+            String key = generateKey(licencia.getFecha());
+            AsistenciaDetalleDTO detalle = AsistenciaDetalleDTO.builder()
+                    .tipo("Falta Justificada")
+                    .fecha(licencia.getFecha().format(dateFormatter))
+                    .hora("N/A")
+                    .materia(licencia.getProgramacionAcademica().getMateria().getNombre())
+                    .sigla(licencia.getProgramacionAcademica().getMateria().getSigla())
+                    .grupo(licencia.getProgramacionAcademica().getMateria().getGrupo())
+                    .build();
+
+            registro.computeIfAbsent(key, k -> new ArrayList<>()).add(detalle);
+        }
+
+        TreeMap<String, List<AsistenciaDetalleDTO>> sortedDatos = ordenarMap(registro);
+        return new RegistroDeAsistenciasDTO(sortedDatos);
+    }
+
+    private TreeMap<String, List<AsistenciaDetalleDTO>> ordenarMap(
+            Map<String, List<AsistenciaDetalleDTO>> registro
+    ) {
+        Comparator<String> customComparator = (key1, key2) -> {
+            String[] parts1 = key1.split("[_ ]");
+            String[] parts2 = key2.split("[_ ]");
+
+            // Primero comparamos los años (en orden descendente)
+            int yearComparison = parts2[0].compareTo(parts1[0]);
+            if (yearComparison != 0) {
+                return yearComparison;
+            }
+
+            // Luego comparamos los meses (en orden descendente)
+            List<String> monthOrder = Arrays.asList("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre");
+            int monthComparison = Integer.compare(monthOrder.indexOf(parts2[1]), monthOrder.indexOf(parts1[1]));
+            if (monthComparison != 0) {
+                return monthComparison;
+            }
+
+            // Finalmente comparamos las semanas (en orden descendente)
+            return parts2[3].compareTo(parts1[3]);
+        };
+
+        TreeMap<String, List<AsistenciaDetalleDTO>> sortedDatos = new TreeMap<>(customComparator);
+        sortedDatos.putAll(registro);
+        return sortedDatos;
     }
 
     private String generateKey(LocalDate date) {

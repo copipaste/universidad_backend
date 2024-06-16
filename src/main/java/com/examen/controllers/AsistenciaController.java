@@ -58,4 +58,9 @@ public class AsistenciaController {
     public RegistroDeAsistenciasDTO obtenerRegistroDeAsistencias(@PathVariable Long docenteId) {
         return asistenciaService.obtenerRegistroDeAsistencias(docenteId);
     }
+
+    @GetMapping("/registro-ordenado/{docenteId}")
+    public RegistroDeAsistenciasDTO getSortedAsistenciaRegister(@PathVariable Long docenteId) {
+        return asistenciaService.getAsistenciasOrdenado(docenteId);
+    }
 }
