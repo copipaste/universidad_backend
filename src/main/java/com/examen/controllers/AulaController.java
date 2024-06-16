@@ -1,6 +1,7 @@
 package com.examen.controllers;
 
 import com.examen.dtos.AulaDTO;
+import com.examen.dtos.AulaDataDTO;
 import com.examen.entities.Aula;
 import com.examen.mappers.AulaMapper;
 import com.examen.services.AulaService;
@@ -38,6 +39,11 @@ public class AulaController {
     public AulaDTO obtenerAulaPorId(@PathVariable Long id) {
         Aula aula = aulaService.obtenerAulaPorId(id);
         return aulaMapper.toDTO(aula);
+    }
+
+    @PutMapping("/{id}")
+    public AulaDTO editarAula(@PathVariable Long id, @RequestBody AulaDataDTO aulaDTO) {
+        return aulaMapper.toDTO(aulaService.actualizarAula(id, aulaDTO));
     }
 
     @DeleteMapping("/{id}")
