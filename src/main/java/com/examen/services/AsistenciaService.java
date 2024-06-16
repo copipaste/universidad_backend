@@ -375,6 +375,11 @@ public class AsistenciaService {
 
         TreeMap<String, List<AsistenciaDetalleDTO>> sortedDatos = new TreeMap<>(customComparator);
         sortedDatos.putAll(registro);
+
+        sortedDatos.forEach((key, value) -> {
+            value.sort((a, b) -> b.getFecha().compareTo(a.getFecha()));
+        });
+
         return sortedDatos;
     }
 
