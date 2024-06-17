@@ -41,7 +41,7 @@ public class UserAuthProvider {
     }
     public String createToken(UserDto dto){
         Date now = new Date();
-        Date validity = new Date(now.getTime() + 3_600_000);    //equivale a una hora
+        Date validity = new Date(now.getTime() + 10_800_000);    //equivale a una hora
 
         return JWT.create()
                 .withIssuer(dto.getEmail())
