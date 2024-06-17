@@ -1,0 +1,20 @@
+
+spring:
+    datasource:
+      driver-class-name: org.postgresql.Driver
+      url: jdbc:postgresql://baseproyecto.cfqi06eaer5u.us-east-2.rds.amazonaws.com:5432/BDContaRH
+      username: postgres
+      password: 12345678
+    jpa:
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
+      hibernate:
+        ddl-auto: update
+
+    springdoc:
+      api-docs:
+        path: /v3/api-docs
+      swagger-ui:
+        path: /swagger-ui.html
+
+
+
