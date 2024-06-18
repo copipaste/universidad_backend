@@ -8,12 +8,8 @@ import com.examen.mappers.HorarioMapper;
 import com.examen.repositories.ProgramacionAcademicaRepository;
 import com.examen.services.HorarioService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
-
-import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,31 +26,14 @@ public class HorarioController {
     private ProgramacionAcademicaRepository programacionAcademicaRepository;
 
     @PostMapping
-    public ResponseEntity<HorarioDTO> crearHorario(@RequestBody HorarioDTO horarioDTO,
-                                                   UriComponentsBuilder uriComponentsBuilder) {
+    public HorarioDTO crearHorario(@RequestBody HorarioDTO horarioDTO) {
         Horario horario = horarioMapper.toEntity(horarioDTO);
         ProgramacionAcademica PA = programacionAcademicaRepository.getReferenceById(
                 horarioDTO.getProgAcId());
         horario.setProgramacionAcademica(PA);
         Horario horarioGuardado = horarioService.guardarHorario(horario);
-
-        if (horarioGuardado == null) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        URI url = uriComponentsBuilder.path("/horarios/{id}").buildAndExpand(horarioGuardado.getId()).toUri();
-        return ResponseEntity.created(url).body(horarioMapper.toDTO(horarioGuardado));
+        return horarioMapper.toDTO(horarioGuardado);
     }
-
-//    @PostMapping
-//    public HorarioDTO crearHorario(@RequestBody HorarioDTO horarioDTO) {
-//        Horario horario = horarioMapper.toEntity(horarioDTO);
-//        ProgramacionAcademica PA = programacionAcademicaRepository.getReferenceById(
-//                horarioDTO.getProgAcId());
-//        horario.setProgramacionAcademica(PA);
-//        Horario horarioGuardado = horarioService.guardarHorario(horario);
-//        return horarioMapper.toDTO(horarioGuardado);
-//    }
 
     @GetMapping
     public List<HorarioDTO> obtenerTodosLosHorarios() {
