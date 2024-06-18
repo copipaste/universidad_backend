@@ -28,10 +28,27 @@ public class HorarioService {
 
     @Transactional
     public Horario guardarHorario(Horario horario) {
+        Horario isHexists = horarioRepository.findHorarioRepetido(
+                horario.getProgramacionAcademica().getDocente().getId(),
+                horario.getDia(),
+                horario.getHoraInicio(),
+                horario.getHoraFin());
+
+        if (isHexists != null) {
+            return null;
+        }
+
         Horario h = horarioRepository.save(horario);
         faltaService.generarClases(horario.getId());
         return h;
     }
+
+//    @Transactional
+//    public Horario guardarHorario(Horario horario) {
+//        Horario h = horarioRepository.save(horario);
+//        faltaService.generarClases(horario.getId());
+//        return h;
+//    }
 
     public List<Horario> obtenerTodosLosHorarios() {
         return horarioRepository.findAll();

@@ -194,7 +194,7 @@ public class AsistenciaService {
 
     private boolean isWithinDistance(Modulo modulo, double latitud, double longitud) {
         double distance = calculateDistance(modulo.getLatitud(), modulo.getLongitud(), latitud, longitud);
-        return distance <= 20;
+        return distance <= 150;
     }
 
     private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {

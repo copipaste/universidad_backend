@@ -230,19 +230,19 @@ public class FaltaService {
         DayOfWeek day = fecha.getDayOfWeek();
         switch (day) {
             case MONDAY:
-                return "lunes";
+                return "Lunes";
             case TUESDAY:
-                return "martes";
+                return "Martes";
             case WEDNESDAY:
-                return "miercoles";
+                return "Miércoles";
             case THURSDAY:
-                return "jueves";
+                return "Jueves";
             case FRIDAY:
-                return "viernes";
+                return "Viernes";
             case SATURDAY:
-                return "sabado";
+                return "Sábado";
             case SUNDAY:
-                return "domingo";
+                return "Domingo";
         }
         return "desconocido";
     }
